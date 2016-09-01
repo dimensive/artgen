@@ -1,13 +1,16 @@
-/*global Chance, chance, Snap, console, alert*/
+/*global Chance, chance, Snap, console, alert, window, location,*/
+/*jslint plusplus: true*/
+
 var centerH = window.innerWidth / 2,
     centerV = window.innerHeight / 2,
     boundSize = window.innerWidth / 3,
     quarterSize = boundSize / 4,
     xStart = centerH - (boundSize / 2),
     yStart = centerV - (boundSize / 2),
-    
-    //seededChance is only used to generate the hashes, then those values are used for URLs and Colors, sizes, etc.
+
     seededChance = new Chance(chance.hash({length: 3}));
+
+    //seededChance is only used to generate the hashes, then those values are used for URLs and Colors, sizes, etc.
 
 //COLORS
 var palette = [["422ef4", "ff84a8", "ffdd8e", "ffffff"], //load these from a txt file?
@@ -32,97 +35,86 @@ var palette = [["422ef4", "ff84a8", "ffdd8e", "ffffff"], //load these from a txt
 function genArt(g) {
     "use strict";
     
+    console.log("genArt " + g);
+
+    //new snap viewbox
     var s = new Snap("#svg").attr({
             viewBox: "0 0 " + window.innerWidth + " " + window.innerHeight,
             width: "100%",
             height: "100%"
         }),
         
-        // TO DO: Iterate through rect[] dyanamically instead of hardcoding all this in....
-        bg = s.circle(centerH, centerV, 5000, 5000), //big ass circle for the bg
-        rect0 = s.rect(xStart, yStart, quarterSize, quarterSize),
-        rect1 = s.rect(xStart + (quarterSize), yStart, quarterSize, quarterSize),
-        rect2 = s.rect(xStart + (quarterSize * 2), yStart, quarterSize, quarterSize),
-        rect3 = s.rect(xStart + (quarterSize * 3), yStart, quarterSize, quarterSize),
-        rect4 = s.rect(xStart, yStart + quarterSize, quarterSize, quarterSize),
-        rect5 = s.rect(xStart + quarterSize, yStart + quarterSize, quarterSize, quarterSize),
-        rect6 = s.rect(xStart + (quarterSize * 2), yStart + quarterSize, quarterSize, quarterSize),
-        rect7 = s.rect(xStart + (quarterSize * 3), yStart + quarterSize, quarterSize, quarterSize),
-        rect8 = s.rect(xStart, yStart + (quarterSize * 2), quarterSize, quarterSize),
-        rect9 = s.rect(xStart + quarterSize, yStart + (quarterSize * 2), quarterSize, quarterSize),
-        rect10 = s.rect(xStart + (quarterSize * 2), yStart + (quarterSize * 2), quarterSize, quarterSize),
-        rect11 = s.rect(xStart + (quarterSize * 3), yStart + (quarterSize * 2), quarterSize, quarterSize),
-        rect12 = s.rect(xStart, yStart + (quarterSize * 3), quarterSize, quarterSize),
-        rect13 = s.rect(xStart + quarterSize, yStart + (quarterSize * 3), quarterSize, quarterSize),
-        rect14 = s.rect(xStart + (quarterSize * 2), yStart + (quarterSize * 3), quarterSize, quarterSize),
-        rect15 = s.rect(xStart + (quarterSize * 3), yStart + (quarterSize * 3), quarterSize, quarterSize),
-        
-        gen = new Chance(g),
-        shade = gen.integer({min: 0, max: 15});
+        bg = s.circle(centerH, centerV, 5000, 5000), //big ass circle as a background for now (find a better bg solution???)
 
-    //ATTRIBUTES
+        gen = new Chance(g),
+        shade = gen.integer({min: 0, max: 15}),
+
+        x = 0,
+        y = 0;
+
+    var nodes = [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9, 10, 11, 12],
+            [13, 14, 15, 16]
+        ];
+
+    for (x = 0; x < nodes.length; x++) {
+        var node = nodes[x];
+        for (y = 0; y < node.length; y++) {
+            node[y] = s.rect(xStart + (quarterSize * x), yStart + (quarterSize * y), quarterSize, quarterSize);
+            node[y].attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
+        }
+    }
+
     bg.attr({fill: "#" + palette[shade][3] });  //creates a background color thats always the lightest shade
-    // TO DO: Iterate through dyanamically instead of hardcoding all this in....
-    rect0.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect1.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect2.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect3.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect4.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect5.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect6.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect7.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect8.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect9.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect10.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect11.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect12.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect13.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect14.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
-    rect15.attr({fill: "#" + palette[shade][gen.integer({min: 0, max: 3})]});
 }
 
 function generateHash() {
     "use strict";
-    location.replace('http://127.0.0.1:59225/#' + seededChance.hash({length: 3}));
+    console.log("generateHash" + seededChance.hash({length: 3}));
+    //location.replace(location.protocol  + '/#' + seededChance.hash({length: 3}));
+    location.hash = seededChance.hash({length: 3}); // this replaces line directly above, but now shows thing/index.html#gen
     genArt(seededChance.hash({length: 3}));
 }
 
-function checkPage() {
-    "use strict";
-    var sPath = window.location.pathname,
-        sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
-    
-    if (sPage === "index.html") {
-        generateHash();
-    }
-}
 
+//generates art based on the same hash
+//if its the first window being loaded then it is
 function sameHash() {
     "use strict";
+    var seededChance = new Chance(chance.hash({length: 3}));
     var sHash = window.location.hash.substring(window.location.hash.lastIndexOf('#') + 1);
-    console.log(sHash);
+    console.log("sameHash " + sHash);
     genArt(sHash);
 }
 
 var s;
 window.onload = function () {
     "use strict";
+    console.log("onLoad");
+    //generateHash();
+    //hoverTest();
     sameHash();
 };
 
-window.onkeydown = function (e) {
+window.onkeyup = function (e) {
     "use strict";
     switch (e.keyCode) {
     case 37:
+        console.log("onkeyup");
         generateHash();
         break;
     case 38:
+        console.log("onkeyup");
         generateHash();
         break;
     case 39:
+        console.log("onkeyup");
         generateHash();
         break;
     case 40:
+        console.log("onkeyup");
         generateHash();
         break;
     }
