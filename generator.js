@@ -72,13 +72,11 @@ function genArt(g) {
 function generateHash() {
     "use strict";
     console.log("generateHash" + seededChance.hash({length: 3}));
-    //location.replace(location.protocol  + '/#' + seededChance.hash({length: 3}));
-    location.hash = seededChance.hash({length: 3}); // this replaces line directly above, but now shows thing/index.html#gen
+    location.hash = seededChance.hash({length: 3});
     genArt(seededChance.hash({length: 3}));
 }
 
 //generates art based on the same hash
-//if its the first window being loaded then it is
 function sameHash() {
     "use strict";
     var seededChance = new Chance(chance.hash({length: 3}));
@@ -91,8 +89,6 @@ var s;
 window.onload = function () {
     "use strict";
     console.log("onLoad");
-    //generateHash();
-    //hoverTest();
     sameHash();
 };
 
