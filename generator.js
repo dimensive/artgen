@@ -8,9 +8,8 @@ var centerH = window.innerWidth / 2,
     xStart = centerH - (boundSize / 2),
     yStart = centerV - (boundSize / 2),
 
-    seededChance = new Chance(chance.hash({length: 3}));
-
     //seededChance is only used to generate the hashes, then those values are used for URLs and Colors, sizes, etc.
+    seededChance = new Chance(chance.hash({length: 3}));
 
 //COLORS
 var palette = [["422ef4", "ff84a8", "ffdd8e", "ffffff"], //load these from a txt file?
@@ -77,7 +76,6 @@ function generateHash() {
     location.hash = seededChance.hash({length: 3}); // this replaces line directly above, but now shows thing/index.html#gen
     genArt(seededChance.hash({length: 3}));
 }
-
 
 //generates art based on the same hash
 //if its the first window being loaded then it is
