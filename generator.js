@@ -86,10 +86,10 @@ function generateHash() {
 function sameHash() {
     "use strict";
     //var seededChance = new Chance(chance.hash({length: 3}));
-    //var sHash = window.location.hash.substring(window.location.hash.lastIndexOf('#') + 1);
-    console.log("same hash being used: " + hashes[hashes.length - 1]);
-    latest = hashes[hashes.length - 1];
-    genArt(latest);
+    var sHash = window.location.hash.substring(window.location.hash.lastIndexOf('#') + 1);
+    //console.log("same hash being used: " + hashes[hashes.length - 1]);
+    //latest = hashes[hashes.length - 1];
+    genArt(sHash);
 
 }
 
@@ -100,8 +100,8 @@ window.onload = function () {
     if (window.location.hash.substring(window.location.hash.lastIndexOf('/') + 1).length === 0) {
         generateHash();
     } else {
-        console.log("Linked to pre-hashed page");
-        sameHash();
+        console.log("Linked to pre-hashed page " + location.hash);
+        genArt(location.hash);
     }
 };
 
