@@ -9,7 +9,11 @@ var centerH = window.innerWidth / 2,
     yStart = centerV - (boundSize / 2),
 
     //seededChance is only used to generate the hashes, then those values are used for URLs and Colors, sizes, etc.
-    seededChance = new Chance(chance.hash({length: 3}));
+    seededChance = new Chance(chance.hash({length: 3})),
+    hashes = [],
+    h,
+    latest,
+    s;
 
 //COLORS
 var palette = [["422ef4", "ff84a8", "ffdd8e", "ffffff"], //load these from a txt file?
@@ -71,45 +75,57 @@ function genArt(g) {
 
 function generateHash() {
     "use strict";
-    console.log("generateHash" + seededChance.hash({length: 3}));
     location.hash = seededChance.hash({length: 3});
-    genArt(seededChance.hash({length: 3}));
+    console.log("new hash generated: " + location.hash);
+    h = location.hash;
+    hashes.push(h);
+    genArt(location.hash);
 }
 
-//generates art based on the same hash
+//generates art based on the previous hash
 function sameHash() {
     "use strict";
-    var seededChance = new Chance(chance.hash({length: 3}));
-    var sHash = window.location.hash.substring(window.location.hash.lastIndexOf('#') + 1);
-    console.log("sameHash " + sHash);
-    genArt(sHash);
+    //var seededChance = new Chance(chance.hash({length: 3}));
+    //var sHash = window.location.hash.substring(window.location.hash.lastIndexOf('#') + 1);
+    console.log("same hash being used: " + hashes[hashes.length - 1]);
+    latest = hashes[hashes.length - 1];
+    genArt(latest);
+
 }
 
-var s;
 window.onload = function () {
     "use strict";
     console.log("onLoad");
-    sameHash();
+
+    if (window.location.hash.substring(window.location.hash.lastIndexOf('/') + 1).length === 0) {
+        generateHash();
+    } else {
+        console.log("Linked to pre-hashed page");
+        sameHash();
+    }
 };
 
 window.onkeyup = function (e) {
     "use strict";
     switch (e.keyCode) {
-    case 37:
+    case 37: //left
         console.log("onkeyup");
         generateHash();
         break;
-    case 38:
+    case 38: //up
         console.log("onkeyup");
         generateHash();
         break;
-    case 39:
+    case 39: //right
         console.log("onkeyup");
         generateHash();
         break;
-    case 40:
+    case 40: //down
         console.log("onkeyup");
         generateHash();
+        break;
+    case 32: //space
+        console.log(hashes);
         break;
     }
 };
